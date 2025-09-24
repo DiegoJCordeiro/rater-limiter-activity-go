@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    command: ["redis-server", "--appendonly", "no"]
+
+  app:
+    build: .
+    depends_on:
+      - redis
+    environment:
+      - RATE_MODE=${RATE_MODE}
+      - RL_IP_LIMIT_PER_SEC=${RL_IP_LIMIT_PER_SEC}
+      - RL_IP_BLOCK_SECONDS=${RL_IP_BLOCK_SECONDS}
+      - RL_TOKEN_HEADER=${RL_TOKEN_HEADER}
+      - RL_TOKEN_DEFAULT_LIMIT_PER_SEC=${RL_TOKEN_DEFAULT_LIMIT_PER_SEC}
+      - RL_TOKEN_DEFAULT_BLOCK_SECONDS=${RL_TOKEN_DEFAULT_BLOCK_SECONDS}
+      - RL_TOKENS_JSON=${RL_TOKENS_JSON}
+      - REDIS_ADDR=${REDIS_ADDR}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_PASS=${REDIS_PASS}
+    ports:
+      - "8080:8080"
