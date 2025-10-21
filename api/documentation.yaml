@@ -1,0 +1,59 @@
+openapi: 3.0.4
+
+info:
+  title: Rater Limiter API
+  description: API de Rater Limiter da [Pós Go Expert](https://goexpert.fullcycle.com.br/pos-goexpert)
+  termsOfService: https://swagger.io/terms/
+  contact:
+    email: diegocordeiro.contatos@gmail.com
+  license:
+    name: Apache 2.0
+    url: https://github.com/DiegoJCordeiro/rater-limiter-activity-go/blob/main/LICENSE
+  version: 1.0.12
+servers:
+  - url: http://localhost:8080/rater-limiter/v1
+tags:
+  - name: rater-limiter
+    description: Everything about Rater Limiters
+  - name: health-check
+    description: Everything about API's Health Check
+paths:
+  /health-check:
+    get:
+      tags:
+        - health-check
+      summary: Get API's health.
+      description: Get API's health.
+      operationId: getHealthCheck
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheck'
+
+components:
+  schemas:
+    HealthCheck:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int64
+          example: 200
+        description:
+          type: string
+          format: int64
+          example: 'OK'
+    RaterLimiter:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int64
+          example: 200
+        description:
+          type: string
+          format: int64
+          example: 'OK'

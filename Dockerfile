@@ -1,13 +1,30 @@
-FROM golang:1.22-alpine AS build
-WORKDIR /src
+FROM golang:1.21-alpine AS builder
+
+WORKDIR /app
+
+# Copia arquivos de dependências
 COPY go.mod go.sum ./
 RUN go mod download
-COPY . .
-RUN CGO_ENABLED=0 go build -o /out/server ./cmd/server
 
-FROM gcr.io/distroless/base-debian12
-WORKDIR /
-COPY --from=build /out/server /server
+# Copia código fonte
+COPY . .
+
+# Compila a aplicação
+RUN CGO_ENABLED=0 GOOS=linux go build -o ratelimiter .
+
+# Imagem final
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# Copia o binário compilado
+COPY --from=builder /app/ratelimiter .
+
+# Copia arquivo .env (opcional)
+COPY .env* ./
+
 EXPOSE 8080
-USER 65532:65532
-ENTRYPOINT ["/server"]
+
+CMD ["./ratelimiter"]

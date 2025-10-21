@@ -1,39 +1,57 @@
 package config
 
 import (
-	"github.com/spf13/viper"
+	"os"
+	"strconv"
 	"time"
 )
 
-type TokenLimit struct {
-	LimitPerSecond int           `mapstructure:"limit_per_second"`
-	BlockFor       time.Duration `mapstructure:"block_for"`
-}
-
 type Config struct {
-	RedisAddr     string `mapstructure:"redis_addr"`
-	RedisDB       int    `mapstructure:"redis_db"`
-	RedisUsername string `mapstructure:"redis_username"`
-	RedisPassword string `mapstructure:"redis_password"`
+	// Configurações do Redis
+	RedisAddr     string
+	RedisPassword string
+	RedisDB       int
+
+	// Configurações de Rate Limiting por IP
+	IPRateLimit int
+	IPBlockTime time.Duration
+
+	// Configurações de Rate Limiting por Token
+	TokenRateLimit int
+	TokenBlockTime time.Duration
 }
 
-func setDefaultValues() {
-	viper.SetDefault("http_port", 8080)
-	viper.SetDefault("redis_addr", "localhost:6379")
-	viper.SetDefault("redis_db", 0)
-}
-
-func Load() (*Config, error) {
-	viper.SetConfigName(".env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
-	viper.AutomaticEnv()
-	setDefaultValues()
-	_ = viper.ReadInConfig()
-
-	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, err
+func Load() *Config {
+	return &Config{
+		RedisAddr:      getEnv("REDIS_ADDR", "localhost:6379"),
+		RedisPassword:  getEnv("REDIS_PASSWORD", ""),
+		RedisDB:        getEnvAsInt("REDIS_DB", 0),
+		IPRateLimit:    getEnvAsInt("IP_RATE_LIMIT", 10),
+		IPBlockTime:    getEnvAsDuration("IP_BLOCK_TIME", 1*time.Minute),
+		TokenRateLimit: getEnvAsInt("TOKEN_RATE_LIMIT", 100),
+		TokenBlockTime: getEnvAsDuration("TOKEN_BLOCK_TIME", 1*time.Minute),
 	}
-	return &cfg, nil
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func getEnvAsInt(key string, defaultValue int) int {
+	valueStr := os.Getenv(key)
+	if value, err := strconv.Atoi(valueStr); err == nil {
+		return value
+	}
+	return defaultValue
+}
+
+func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
+	valueStr := os.Getenv(key)
+	if value, err := time.ParseDuration(valueStr); err == nil {
+		return value
+	}
+	return defaultValue
 }

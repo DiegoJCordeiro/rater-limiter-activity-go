@@ -1,25 +1,36 @@
-version: "3.9"
+version: '3.8'
 
 services:
   redis:
     image: redis:7-alpine
-    ports: ["6379:6379"]
-    command: ["redis-server", "--appendonly", "no"]
+    container_name: ratelimiter-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   app:
     build: .
-    depends_on:
-      - redis
-    environment:
-      - RATE_MODE=${RATE_MODE}
-      - RL_IP_LIMIT_PER_SEC=${RL_IP_LIMIT_PER_SEC}
-      - RL_IP_BLOCK_SECONDS=${RL_IP_BLOCK_SECONDS}
-      - RL_TOKEN_HEADER=${RL_TOKEN_HEADER}
-      - RL_TOKEN_DEFAULT_LIMIT_PER_SEC=${RL_TOKEN_DEFAULT_LIMIT_PER_SEC}
-      - RL_TOKEN_DEFAULT_BLOCK_SECONDS=${RL_TOKEN_DEFAULT_BLOCK_SECONDS}
-      - RL_TOKENS_JSON=${RL_TOKENS_JSON}
-      - REDIS_ADDR=${REDIS_ADDR}
-      - REDIS_DB=${REDIS_DB}
-      - REDIS_PASS=${REDIS_PASS}
+    container_name: ratelimiter-app
     ports:
       - "8080:8080"
+    environment:
+      - REDIS_ADDR=redis:6379
+      - REDIS_PASSWORD=
+      - REDIS_DB=0
+      - IP_RATE_LIMIT=10
+      - IP_BLOCK_TIME=5m
+      - TOKEN_RATE_LIMIT=100
+      - TOKEN_BLOCK_TIME=5m
+      - PORT=8080
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis-data:
