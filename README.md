@@ -359,17 +359,17 @@ make docker-logs
 make help              # Mostra ajuda com todos os comandos
 make build             # Compila a aplicação
 make run               # Executa localmente
-make test              # Executa todos os testes
-make test-unit         # Testes unitários
-make test-integration  # Testes de integração
-make test-coverage     # Relatório de cobertura
+make tests              # Executa todos os testes
+make tests-unit         # Testes unitários
+make tests-integration  # Testes de integração
+make tests-coverage     # Relatório de cobertura
 make docker-up         # Sobe containers
 make docker-down       # Para containers
 make docker-logs       # Mostra logs
 make docker-restart    # Reinicia containers
 make clean             # Remove arquivos gerados
 make deps              # Instala dependências
-make load-test         # Teste de carga básico
+make load-tests         # Teste de carga básico
 ```
 
 ---
@@ -398,10 +398,10 @@ export TOKEN_BLOCK_TIME=5m
 export PORT=8080
 
 # 5. Execute a aplicação
-go run cmd/server/main.go
+go run cmd/rater-limiter-activity/rater-limiter-activity.go
 
 # Ou compile e execute
-go build -o bin/ratelimiter cmd/server/main.go
+go build -o bin/ratelimiter cmd/rater-limiter-activity/rater-limiter-activity.go
 ./bin/ratelimiter
 ```
 
@@ -742,16 +742,16 @@ curl -i -H "API_KEY: premium_token" http://localhost:8080/
 
 ```bash
 # Teste de carga básico
-make load-test
+make load-tests
 
 # Testes unitários
-make test-unit
+make tests-unit
 
 # Todos os testes
-make test
+make tests
 
 # Com cobertura
-make test-coverage
+make tests-coverage
 ```
 
 ---
@@ -760,13 +760,13 @@ make test-coverage
 
 ```bash
 # Executar todos os testes
-go test ./... -v
+go tests ./... -v
 
 # Testes com cobertura
-go test ./... -cover
+go tests ./... -cover
 
 # Relatório HTML de cobertura
-go test ./... -coverprofile=coverage.out
+go tests ./... -coverprofile=coverage.out
 go tool cover -html=coverage.out
 ```
 

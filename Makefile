@@ -4,24 +4,16 @@ help: ## Mostra esta ajuda
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 build: ## Compila a aplicação
-	go build -o bin/ratelimiter .
+	go build -o bin/ratelimiter ./cmd/rater-limiter-activity
 
 run: ## Executa a aplicação localmente
-	go run main.go
+	go run ./cmd/rater-limiter-activity/main.go
 
 test: ## Executa todos os testes
 	go test ./... -v -cover
 
 test-unit: ## Executa apenas testes unitários
 	go test ./internal/... -v -cover
-
-test-integration: ## Executa testes de integração
-	go test ./test/... -v
-
-test-coverage: ## Gera relatório de cobertura
-	go test ./... -coverprofile=coverage.out
-	go tool cover -html=coverage.out -o coverage.html
-	@echo "Relatório gerado em coverage.html"
 
 docker-up: ## Sobe os containers com docker-compose
 	docker-compose up --build -d
