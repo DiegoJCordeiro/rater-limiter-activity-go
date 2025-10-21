@@ -361,8 +361,6 @@ make build             # Compila a aplicação
 make run               # Executa localmente
 make tests              # Executa todos os testes
 make tests-unit         # Testes unitários
-make tests-integration  # Testes de integração
-make tests-coverage     # Relatório de cobertura
 make docker-up         # Sobe containers
 make docker-down       # Para containers
 make docker-logs       # Mostra logs
