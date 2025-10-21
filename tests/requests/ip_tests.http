@@ -1,0 +1,263 @@
+### Rate Limiter - Testes por IP
+### Use este arquivo com REST Client (VS Code) ou IntelliJ HTTP Client
+### Limite padrão de IP: 10 requisições/segundo
+### IMPORTANTE: Não inclua header API_KEY para testar limite por IP
+
+@baseUrl = http://localhost:8080
+
+###############################################
+# TESTE 1: Requisição única sem token (por IP)
+###############################################
+
+### Request 1 - Sem token (usa limite de IP)
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 2: Múltiplas requisições do mesmo IP
+###############################################
+
+### Request 2
+GET {{baseUrl}}/
+
+### Request 3
+GET {{baseUrl}}/
+
+### Request 4
+GET {{baseUrl}}/
+
+### Request 5
+GET {{baseUrl}}/
+
+### Request 6
+GET {{baseUrl}}/
+
+### Request 7
+GET {{baseUrl}}/
+
+### Request 8
+GET {{baseUrl}}/
+
+### Request 9
+GET {{baseUrl}}/
+
+### Request 10
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 3: Exceder limite de IP (deve retornar 429)
+###############################################
+
+### Request 11 - Executar rapidamente após as 10 anteriores
+### DEVE RETORNAR 429 Too Many Requests
+GET {{baseUrl}}/
+
+### Request 12 - Também deve ser bloqueada
+GET {{baseUrl}}/
+
+### Request 13 - Também deve ser bloqueada
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 4: Verificar mensagem de erro 429
+###############################################
+
+### Exceder limite e verificar resposta
+### Resposta esperada:
+### HTTP/1.1 429 Too Many Requests
+### {"error": "you have reached the maximum number of requests or actions allowed within a certain time frame"}
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 5: Aguardar reset (1 segundo)
+###############################################
+
+### Aguarde 1-2 segundos e execute esta requisição
+### Deve funcionar novamente (novo ciclo de 1 segundo)
+### AGUARDE antes de executar!
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 6: Teste de burst (requisições rápidas)
+###############################################
+
+### Execute estas requisições o mais rápido possível
+### Para testar se o rate limiter funciona corretamente
+
+### Burst Request 1
+GET {{baseUrl}}/
+
+### Burst Request 2
+GET {{baseUrl}}/
+
+### Burst Request 3
+GET {{baseUrl}}/
+
+### Burst Request 4
+GET {{baseUrl}}/
+
+### Burst Request 5
+GET {{baseUrl}}/
+
+### Burst Request 6
+GET {{baseUrl}}/
+
+### Burst Request 7
+GET {{baseUrl}}/
+
+### Burst Request 8
+GET {{baseUrl}}/
+
+### Burst Request 9
+GET {{baseUrl}}/
+
+### Burst Request 10
+GET {{baseUrl}}/
+
+### Burst Request 11 - DEVE SER BLOQUEADA
+GET {{baseUrl}}/
+
+### Burst Request 12 - DEVE SER BLOQUEADA
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 7: POST Request (mesmo IP)
+###############################################
+
+### POST sem token
+POST {{baseUrl}}/
+Content-Type: application/json
+
+{
+  "test": "data",
+  "ip_test": true
+}
+
+###############################################
+# TESTE 8: Diferentes métodos HTTP
+###############################################
+
+### GET Request
+GET {{baseUrl}}/
+
+### POST Request
+POST {{baseUrl}}/
+Content-Type: application/json
+
+{
+  "method": "POST"
+}
+
+### PUT Request (se suportado)
+PUT {{baseUrl}}/
+Content-Type: application/json
+
+{
+  "method": "PUT"
+}
+
+### DELETE Request (se suportado)
+DELETE {{baseUrl}}/
+
+###############################################
+# TESTE 9: Simular proxy headers
+###############################################
+
+### Request com X-Forwarded-For
+### (Simula requisição vindo de proxy)
+GET {{baseUrl}}/
+X-Forwarded-For: 192.168.1.100
+
+### Request com X-Real-IP
+GET {{baseUrl}}/
+X-Real-IP: 192.168.1.101
+
+### Request com múltiplos IPs no X-Forwarded-For
+### (Sistema deve pegar o primeiro)
+GET {{baseUrl}}/
+X-Forwarded-For: 10.0.0.1, 192.168.1.1, 172.16.0.1
+
+###############################################
+# TESTE 10: Após bloqueio total
+###############################################
+
+### Após IP ser bloqueado, aguarde o tempo de bloqueio
+### (5 minutos por padrão) e execute esta requisição
+### AGUARDE O TEMPO DE BLOQUEIO antes de executar!
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 11: Health Check (se existir)
+###############################################
+
+### Verificar se servidor está respondendo
+GET {{baseUrl}}/health
+
+### Ou endpoint raiz
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 12: Comparação IP vs Token
+###############################################
+
+### Request 1: Sem token (limite de IP = 10)
+GET {{baseUrl}}/
+
+### Request 2: Com token (limite de token = 100)
+### Note que mesmo IP, mas COM token, tem limite maior
+GET {{baseUrl}}/
+API_KEY: comparison_token
+
+### Request 3: Sem token novamente
+GET {{baseUrl}}/
+
+###############################################
+# TESTE 13: Estressar o limite
+###############################################
+
+### Execute todas estas em sequência rápida
+### para forçar bloqueio
+
+### Stress 1
+GET {{baseUrl}}/
+
+### Stress 2
+GET {{baseUrl}}/
+
+### Stress 3
+GET {{baseUrl}}/
+
+### Stress 4
+GET {{baseUrl}}/
+
+### Stress 5
+GET {{baseUrl}}/
+
+### Stress 6
+GET {{baseUrl}}/
+
+### Stress 7
+GET {{baseUrl}}/
+
+### Stress 8
+GET {{baseUrl}}/
+
+### Stress 9
+GET {{baseUrl}}/
+
+### Stress 10
+GET {{baseUrl}}/
+
+### Stress 11 - BLOQUEADA
+GET {{baseUrl}}/
+
+### Stress 12 - BLOQUEADA
+GET {{baseUrl}}/
+
+### Stress 13 - BLOQUEADA
+GET {{baseUrl}}/
+
+### Stress 14 - BLOQUEADA
+GET {{baseUrl}}/
+
+### Stress 15 - BLOQUEADA
+GET {{baseUrl}}/

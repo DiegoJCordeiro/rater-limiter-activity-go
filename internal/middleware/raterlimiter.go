@@ -22,7 +22,7 @@ func RateLimitMiddleware(rateLimiter *limiter.RateLimiter) func(http.Handler) ht
 			if token != "" {
 				result, err = rateLimiter.CheckToken(token)
 			} else {
-				// Extrai IP do request
+				// Extrai IP do requests
 				ip := getIP(r)
 				result, err = rateLimiter.CheckIP(ip)
 			}
