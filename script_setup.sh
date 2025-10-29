@@ -61,7 +61,7 @@ echo ""
 echo -e "${YELLOW}📝 Configurando ambiente...${NC}"
 if [ ! -f .env ]; then
     echo -e "${BLUE}→${NC} Criando arquivo .env..."
-    cp .env.example .env
+    cp .env .env
     echo -e "${GREEN}✓${NC} Arquivo .env criado com configurações padrão"
 else
     echo -e "${GREEN}✓${NC} Arquivo .env já existe"
@@ -182,6 +182,8 @@ echo ""
 # Oferecer executar teste
 read -p "Deseja executar um teste rápido agora? (s/n): " run_test
 
+set +e
+
 if [[ $run_test =~ ^[Ss]$ ]]; then
     echo ""
     echo -e "${YELLOW}🧪 Executando teste rápido...${NC}"
@@ -211,6 +213,8 @@ if [[ $run_test =~ ^[Ss]$ ]]; then
         echo -e "${YELLOW}⚠${NC} Nenhuma requisição foi bloqueada. Verifique as configurações."
     fi
 fi
+
+set -e
 
 echo ""
 echo -e "${GREEN}Tudo pronto! Bom desenvolvimento! 🚀${NC}"

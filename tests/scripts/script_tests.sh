@@ -7,7 +7,7 @@ set -e
 
 BASE_URL="${BASE_URL:-http://localhost:8080}"
 IP_LIMIT="${IP_LIMIT:-10}"
-TOKEN_LIMIT="${TOKEN_LIMIT:-100}"
+TOKEN_LIMIT="${TOKEN_LIMIT:-10}"
 
 echo "======================================"
 echo "Rate Limiter - Teste de Carga"
